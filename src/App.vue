@@ -1,28 +1,69 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="main-container">
+    <div id="title-container">
+    <h1> The Wise Words of Ron Swanson</h1>
+    <img src="./assets/ron.png" alt=":)" id="ron-png">
+    </div>
+      <quote-selection :quotes="quotes" />
+      <quote-display :quote="selectedQuote" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { eventBus } from './main.js'
+import QuoteSelection from "./components/QuoteSelection"
+import QuoteDisplay from "./components/QuoteDisplay"
+
 
 export default {
-  name: 'App',
+  data(){
+    return {
+      quotes: null,
+      selectedQuote: null
+    }
+  },
+
   components: {
-    HelloWorld
+    'quote-selection': QuoteSelection,
+    'quote-display': QuoteDisplay
+  },
+  
+  mounted(){
+    fetch("http://ron-swanson-quotes.herokuapp.com/v2/quotes/110")
+    .then(res => res.json())
+    .then(data => this.quotes = data) 
+
+    eventBus.$on('selected-quote', (quote) => {
+      this.selectedQuote = quote
+    })
+
   }
-}
+
+  }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+
+#main-container {
+  margin: auto;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }
+
+h1 {
+  color: rgb(82, 59, 59);
+}
+#title-container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+#ron-png {
+  width: 200px;
+  padding: 20px;
+}
+
 </style>
